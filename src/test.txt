@@ -1,0 +1,64 @@
+  /*
+  useEffect(() => {
+    
+    if (!graph && data) {
+      graph = new G6.Graph({
+        modes: {
+          default: [
+            // ...
+            {
+              type: "tooltip", // Tooltip
+              formatText(model) {
+                // The content of tooltip
+                const text =
+                  "label: " + model.label + "<br/> class: " + model.class;
+                return text;
+              },
+            },
+          ],
+        },
+        container: ref.current,
+        width: "1000",
+        height: "1000",
+        modes: {
+          default: ["drag-canvas", "zoom-canvas", "drag-node", "click-select"],
+        },
+        defaultEdge: {
+          labelCfg: {
+            autoRotate: true,
+          },
+        },
+        defaultNode: {
+          size: 100,
+        },
+        layout: {
+          type: "forceAtlas2",
+          preventOverlap: true,
+          dissuadeHubs: true,
+          kr: 20,
+        },
+        nodeStateStyles: {
+          // The node style when the state 'hover' is true
+          hover: {
+            fill: "lightsteelblue",
+          },
+          // The node style when the state 'click' is true
+          click: {
+            stroke: "#000",
+            lineWidth: 3,
+          },
+        },
+        // The edge styles in different states
+        edgeStateStyles: {
+          // The edge style when the state 'click' is true
+          click: {
+            stroke: "steelblue",
+          },
+        },
+      });
+
+      graph.data(data);
+      graph.render();
+    }
+  }, [data]);
+*/
