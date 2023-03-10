@@ -6,7 +6,7 @@ const GraphData = async (params) => {
   //Assign your key to environment variable TERMINUSDB_ACCESS_TOKEN
   const client = new TerminusClient.WOQLClient(params.url, {
     organization: params.organization,
-    token: process.env.REACT_APP_TERMINUSDB_ACCESS_TOKEN,
+    token: params.token,
   });
   client.db(params.db);
 

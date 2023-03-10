@@ -9,10 +9,16 @@ import Button from "@mui/material/Button";
 
 function App() {
   const [data, setData] = useState(null);
-  const [url, setUrl] = useState(window.sessionStorage.getItem("url"));
-  const [org, setOrg] = useState(window.sessionStorage.getItem("org"));
+  const [url, setUrl] = useState(
+    window.sessionStorage.getItem("url") || process.env.REACT_APP_URL
+  );
+  const [org, setOrg] = useState(
+    window.sessionStorage.getItem("org") || process.env.REACT_APP_ORG
+  );
   const [token, setToken] = useState(window.sessionStorage.getItem("token"));
-  const [db, setDB] = useState(window.sessionStorage.getItem("db"));
+  const [db, setDB] = useState(
+    window.sessionStorage.getItem("db") || process.env.REACT_APP_DB
+  );
 
   const [loading, setLoading] = useState(false);
 
