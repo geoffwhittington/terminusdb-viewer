@@ -19,6 +19,7 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
+import Switch from "@mui/material/Switch";
 
 export default function Graph(props) {
   const fgRef = useRef(null);
@@ -26,6 +27,8 @@ export default function Graph(props) {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [checkedDocuments, setCheckedDocuments] = useState({});
   const [parentNds, setParentNodes] = useState([]);
+  const [nodeLabels, setNodeLabels] = useState(true);
+
   const [url, setUrl] = useState(
     window.sessionStorage.getItem("url") || process.env.REACT_APP_URL
   );
@@ -131,34 +134,42 @@ export default function Graph(props) {
         */}
       <Grid item xs={12}>
         <Dialog open={props.filterDialogOpen} onClose={handleFilterDialogClose}>
-          <DialogTitle>Filters</DialogTitle>
+          <DialogTitle>Display Settings</DialogTitle>
           <DialogContent>
-            <FormGroup aria-label="position" sx={{ textAlign: "center" }} row>
-              {checkedDocuments &&
-                Object.keys(checkedDocuments).map((key, index) => (
-                  <FormControlLabel
-                    value={key}
-                    control={
-                      <Checkbox
-                        key={index}
-                        checked={checkedDocuments[key]}
-                        onChange={() => {
-                          const newCheckboxValues = { ...checkedDocuments };
-                          newCheckboxValues[key] = !newCheckboxValues[key];
-                          console.log(newCheckboxValues);
-                          setCheckedDocuments(newCheckboxValues);
-                          toggleNode({
-                            documentType: key,
-                            visible: !checkedDocuments[key],
-                          });
-                        }}
+            <Grid container>
+              <Grid item xs="12">
+                <FormGroup
+                  aria-label="position"
+                  sx={{ textAlign: "center" }}
+                  row
+                >
+                  {checkedDocuments &&
+                    Object.keys(checkedDocuments).map((key, index) => (
+                      <FormControlLabel
+                        value={key}
+                        control={
+                          <Checkbox
+                            key={index}
+                            checked={checkedDocuments[key]}
+                            onChange={() => {
+                              const newCheckboxValues = { ...checkedDocuments };
+                              newCheckboxValues[key] = !newCheckboxValues[key];
+                              console.log(newCheckboxValues);
+                              setCheckedDocuments(newCheckboxValues);
+                              toggleNode({
+                                documentType: key,
+                                visible: !checkedDocuments[key],
+                              });
+                            }}
+                          />
+                        }
+                        label={key}
+                        labelPlacement="top"
                       />
-                    }
-                    label={key}
-                    labelPlacement="top"
-                  />
-                ))}
-            </FormGroup>
+                    ))}
+                </FormGroup>
+              </Grid>
+            </Grid>
           </DialogContent>
           <DialogActions>
             <Button onClick={handleFilterDialogClose}>Close</Button>
@@ -205,7 +216,6 @@ export default function Graph(props) {
             warmupTicks={100}
             onNodeClick={(node, event) => {
               if (event.ctrlKey) {
-                console.log(node);
                 selectedNodes.push(node);
                 setOpenSnackbar(true);
                 setSelectedNodes(selectedNodes);
@@ -225,6 +235,30 @@ export default function Graph(props) {
             onNodeDragEnd={(node) => {
               node.fx = node.x;
               node.fy = node.y;
+            }}
+            nodeCanvasObject={(node, ctx, globalScale) => {
+              if (!nodeLabels) return;
+              const label = node.name;
+              const fontSize = 12 / globalScale;
+              ctx.font = `${fontSize}px Sans-Serif`;
+              const textWidth = ctx.measureText(label).width;
+              const bckgDimensions = [textWidth, fontSize].map(
+                (n) => n + fontSize * 0.2
+              ); // some padding
+
+              ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
+              ctx.fillRect(
+                node.x - bckgDimensions[0] / 2,
+                node.y - bckgDimensions[1] / 2,
+                ...bckgDimensions
+              );
+
+              ctx.textAlign = "center";
+              ctx.textBaseline = "middle";
+              ctx.fillStyle = node.color;
+              ctx.fillText(label, node.x, node.y);
+
+              node.__bckgDimensions = bckgDimensions; // to re-use in nodePointerAreaPaint
             }}
           />
         )}
